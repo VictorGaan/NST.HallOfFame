@@ -6,6 +6,7 @@ using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
+using RecursiveDataAnnotationsValidation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Persistence.Repositories
@@ -21,10 +22,9 @@ namespace Infrastructure.Persistence.Repositories
         }
         public async Task<PersonResponse> CreatePerson(PersonRequest personRequest)
         {
-            var context = new ValidationContext(personRequest);
+            var validator = new RecursiveDataAnnotationValidator();
             var results = new List<ValidationResult>();
-
-            if (!Validator.TryValidateObject(personRequest, context, results, true))
+            if (!validator.TryValidateObjectRecursive(personRequest, results))
                 throw new ModelException(results);
 
             if (personRequest.Skills.Select(x => x.Name).HasDuplicates())
@@ -62,10 +62,9 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<PersonResponse> UpdatePerson(long id, PersonRequest personRequest)
         {
-            var context = new ValidationContext(personRequest);
+            var validator = new RecursiveDataAnnotationValidator();
             var results = new List<ValidationResult>();
-
-            if (!Validator.TryValidateObject(personRequest, context, results, true))
+            if (!validator.TryValidateObjectRecursive(personRequest, results))
                 throw new ModelException(results);
 
             if (personRequest.Skills.Select(x => x.Name).HasDuplicates())
