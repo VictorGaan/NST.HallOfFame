@@ -69,8 +69,6 @@ namespace NST.Test
 
             _personRepository.Setup(x => x.UpdatePerson(1, personRequest)).Returns(Task.Run(() => personResponse));
             var person = await _personRepository.Object.UpdatePerson(1, personRequest);
-            _personRepository.Setup(x => x.GetPeople()).Returns(Task.Run(() => GetPeople()));
-            var persons = await _personRepository.Object.GetPeople();
             Assert.NotNull(person);
         }
         private List<PersonResponse> GetPeople() => new List<PersonResponse>
